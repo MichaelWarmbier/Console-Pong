@@ -3,7 +3,7 @@ Presentation material. Designed to showcase the basic capabilities of retro UI i
 
 ## Info
 
-This simplistic version of Pong, a first era video game mimicing Tennis in a simplistic, top down perspective, was created using C++'s standard libaries and the Windows C++ library.
+This simplistic version of Pong, a first era video game mimicking Tennis in a simplistic, top down perspective, was created using C++'s standard libaries and the Windows C++ library.
 
 Only one file sans readme, the source.cpp. Can only be compiled through a Windows C++ compiler (such as Visual Studio). Game's barebone physics and limited graphics are intentional.
 
