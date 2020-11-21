@@ -7,4 +7,4 @@ This simplistic version of Pong, a first era video game mimicing Tennis in a sim
 
 Only one file sans readme, the source.cpp. Can only be compiled through a Windows C++ compiler (such as Visual Studio). Game's barebone physics and limited graphics are intentional.
 
-![Preview](https://gyazo.com/240a5114f426559bb1e9a546c609eea8)
+![Preview](https://im2.ezgif.com/tmp/ezgif-2-00d3ee697cd4.gif)
