@@ -11,4 +11,6 @@ Only one file sans readme, the source.cpp. Can only be compiled through a Window
 
 Relevant Resources:
 
-[Lag & Blanking](https://www.youtube.com/watch?v=Q8ph2OVqZeM) - Retro Game Mechanics Explained
+["https://www.youtube.com/watch?v=Q8ph2OVqZeM" - Retro Game Mechanics Explained](https://www.youtube.com/watch?v=Q8ph2OVqZeM)
+
+["C++ Tutorial 18 - Simple Snake Game (Part 1)" - NVitanovic](https://www.youtube.com/watch?v=E_-lMZDi7Uw)
