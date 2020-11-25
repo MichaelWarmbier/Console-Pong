@@ -8,3 +8,7 @@ This simplistic version of Pong, a first era video game mimicking hockey in a si
 Only one file sans readme, the source.cpp. Can only be compiled through a Windows C++ compiler (such as Visual Studio). Game's barebone physics and limited graphics are intentional.
 
 ![Preview](https://im2.ezgif.com/tmp/ezgif-2-00d3ee697cd4.gif)
+
+Relevant Resources:
+
+[Lag & Blanking](https://www.youtube.com/watch?v=Q8ph2OVqZeM) - Retro Game Mechanics Explained
