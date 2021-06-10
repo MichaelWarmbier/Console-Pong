@@ -1,11 +1,10 @@
 # Console-Pong
-Presentation material. Designed to showcase the basic capabilities of retro UI in game design.
+
+The simple game "Pong" redesigned using C++.
 
 ## Info
 
-This simplistic version of Pong, a first era video game mimicking hockey in a simplistic, top down perspective, was created using C++'s standard libaries and the Windows C++ library.
-
-Only one file sans readme, the source.cpp. Can only be compiled through a Windows C++ compiler (such as Visual Studio). Game's barebone physics and limited graphics are intentional.
+This program was made for a small presentation regarding simple screen output and logic loops for making games using C++. Below are resources shared during the presentation.
 
 ![Preview](https://i.gyazo.com/240a5114f426559bb1e9a546c609eea8.gif)
 
