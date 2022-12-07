@@ -4,9 +4,9 @@ The simple game "Pong" redesigned using C++.
 
 ## Info
 
-This program was made for a small presentation regarding simple screen output and logic loops for making games using C++. Below are resources shared during the presentation.
+This program was made for a small presentation regarding simple screen output and logic loops for making games using C++. Below are resources shared during the presentation. It was later remade for a presentation on simple video games in code.
 
-![Preview](https://i.gyazo.com/240a5114f426559bb1e9a546c609eea8.gif)
+![Preview](https://i.gyazo.com/5b5744aaa296ae5869f281b7414ad4a8.gif)
 
 Relevant Resources:
 
