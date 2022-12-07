@@ -1,166 +1,137 @@
-#include <iostream>		// Standard C++ Lib
-#include <conio.h>		// Input Functions
-#include <ctime>		// Time Functions
-#include <windows.h>	// Windows ONLY Functions
+#include <iostream>
+#include <conio.h>
+#include <time.h>
+#include <chrono>
 using namespace std;
+using namespace chrono;
 
-COORD screen;											// Screen Coordinates (Windows Only)
-HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);		// Handle For Console Window
+// Function Templates
 
-const int HEIGHT = 10, WIDTH = 60;								// Board Height & Width (h, w)
-int Ball_P[2] = { WIDTH / 2, HEIGHT / 2 };						// Ball Position (x,y)
-int Ball_V[2] = { 0,0 };										// Ball Direction (x,y)
-int Paddle_P[2] = { HEIGHT / 2,  HEIGHT / 2 };					// Paddle Positions (l, r)
-int Score[2] = { 0,0 };											// Scores (l, r)
-int AI = 2;														// AI Determiner (higher => easier)
+	/* Frame Functions */
+void Draw();							// Draw current frame
+void Input();							// Check for input on current frame
+void Logic();							// Apply logic for frame
+
+	/* Utility Functions */
+double Wait(double waitTime);			// Pause execution for given time [ms]
+double GetTimeSince(double startTime);	// Get time since given time  [double]
+double GetTime();						// Get current time
+
+// Game Variables
+
+const int X = 0, L = 0;
+const int Y = 1, R = 1;
+
+int screenHeight = 15;
+int screenWidth = 60;
+
+int ballPos[] = { screenWidth / 2, screenHeight / 2 };
+int ballDir[] = { 1, -1 };
+int paddle[] = { screenHeight / 2, screenHeight / 2 };
+
+int score[] = { 0, 0 };
+int AI_Level = 3;
+double lastFrameTime;
+double FPS = 0.05;
+
+// Main Function
+
+int main() {
+
+	bool GAME_RUNNING = true;
+	lastFrameTime = GetTime();
+
+	do {
+		Draw();				// Update screen
+		Input();			// Check for input
+		Logic();			// Handle logic per frame
+	} while (GAME_RUNNING);
 
 
-void Draw(), Input(), Logic();		// Main Routines
-void ResetBall();					// Secondary Routine
-
-int main() {		
-	srand(time(0));		// Random Seed
-	screen.Y = 0; screen.X = 0;
-
-	ResetBall();								
-
-	while (true) {
-		Draw(); Input(); Logic();					// Logic Loop (Frame)
-		SetConsoleCursorPosition(console, screen);	// Reset Screen Drawing
-		Sleep(100);									// Buffer Frames
-	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
-void Draw() {		// Draw characters to screen
-	
-	for (int i = 0; i < WIDTH; i++) {		// Score
+// Function Definitions
 
-		if (i == 8)
-			cout << Score[0];
+void Draw() { 
 
-		else if (i == WIDTH - 9)
-			cout << Score[1];
+	cout << "Score: " << score[0];
+	for (int space = 0; space < screenWidth - 16; space++) cout << ' ';
+	cout << "Score: " << score[1] << endl;
 
-		else
-			cout << ' ';
-	}
+	for (int cursorY = 0; cursorY < screenHeight; cursorY++) {
+		for (int cursorX = 0; cursorX < screenWidth; cursorX++) {
 
-	cout << endl;
+			if (cursorX == ballPos[0] && cursorY == ballPos[1]) cout << 'o';
+			else if (cursorY == 0 || cursorY == screenHeight - 1)  cout << '-';
+			else if (cursorX == screenWidth / 2 && cursorY != 0 && cursorY != screenHeight - 1) cout << '|';
+			else if (cursorX == 0 && (cursorY == paddle[L] || cursorY == paddle[L] + 1 || cursorY == paddle[L] - 1)) cout << ']';
+			else if (cursorX == screenWidth - 1 && (cursorY == paddle[R] || cursorY == paddle[R] + 1 || cursorY == paddle[R] - 1)) cout << '[';
+			else cout << ' ';
 
-	for (int y = 0; y < HEIGHT; y++) {
-
-		for (int x = 0; x < WIDTH; x++) {
-
-			if (y == 0 || y == HEIGHT - 1)																	// Top & Bottom Border
-				cout << '=';
-
-			else if (x == 0 && (y == Paddle_P[0] || y == Paddle_P[0] + 1 || y == Paddle_P[0] - 1))					// Left Paddle
-				cout << ']';
-
-			else if (x == WIDTH - 1 && (y == Paddle_P[1] || y == Paddle_P[1] + 1 || y == Paddle_P[1] - 1))	// Right Paddle
-				cout << '[';
-
-			else if (y == Ball_P[1] && x == Ball_P[0])																// Ball
-				cout << 'O';
-
-			else if (x == (WIDTH / 2))																		// Center Line
-				cout << "|";
-
-			else
-				cout << ' ';																						// Empty Space
 		}
 		cout << endl;
 	}
+	printf("\033[%d;%dH", 1, 1);
 
 }
 
-void Input() {		// Logic For Input
+void Input() {
 
 	if (_kbhit())
 		switch (_getch()) {
-
-		case 'w':		// Up
-			Paddle_P[0]--;		
-			break;
-			
-		case 's':		// Down
-			Paddle_P[0]++;
-			break;
+			case 'w':
+			case 38:
+				if (!(paddle[L] - 2 <= 0)) paddle[L]--;
+				break;
+			case 's':
+			case '40':
+				if (!(paddle[L] + 2 >= screenHeight - 1)) paddle[L]++;
+				break;
 		}
-
-	/* AI Controlled Paddle */
-	if (Paddle_P[1] < Ball_P[1] && rand() % AI == 0)
-		Paddle_P[1]++;
-
-	if (Paddle_P[1] > Ball_P[1] && rand() % AI == 0)
-		Paddle_P[1]--;
-
 }
 
-void Logic() {		// Regular Logic
+void Logic() {
 
-	/* Paddle Limits */
-	if (Paddle_P[0] < 2)
-		Paddle_P[0] = 2;
-	if (Paddle_P[0] > HEIGHT - 3)
-		Paddle_P[0] = HEIGHT - 3;
-	if (Paddle_P[1] < 2)
-		Paddle_P[1] = 2;
-	if (Paddle_P[1] > HEIGHT - 3)
-		Paddle_P[1] = HEIGHT - 3;
+	// Right-side AI
+	if (ballPos[Y] > paddle[R]) paddle[R]++;
+	if (ballPos[Y] < paddle[R]) paddle[R]--;
+	paddle[R] += 1 - ((time(nullptr) % AI_Level == 0) * 2);
+	if (paddle[R] - 2 <= 0) paddle[R] = 1;
+	if (paddle[R] + 2 >= screenHeight - 1) paddle[R] = screenHeight - 2;
 
-	/* Velocity */
-	Ball_P[0] += Ball_V[0];
-	Ball_P[1] += Ball_V[1];
+	// Movement
+	ballPos[X] += ballDir[X];
+	ballPos[Y] += ballDir[Y];
 
-	/* Paddle and Ceiling Collision */
-	if (Ball_P[0] == 0 && (Ball_P[1] == Paddle_P[0] || Ball_P[1] == Paddle_P[0] + 1 || Ball_P[1] == Paddle_P[0] - 1))
-		Ball_V[0] *= -1;
+	// Collision
+	if (ballPos[Y] <= 0 || ballPos[Y] >= screenHeight - 1) ballDir[Y] *= -1;
+	if (ballPos[X] == 1 && (ballPos[Y] == paddle[L] || ballPos[Y] == paddle[L] + 1 || ballPos[Y] == paddle[L] - 1)) ballDir[X] *= -1;
+	if (ballPos[X] == screenWidth - 2 && (ballPos[Y] == paddle[R] || ballPos[Y] == paddle[R] + 1 || ballPos[Y] == paddle[R] - 1)) ballDir[X] *= -1;
 
-	if (Ball_P[0] == WIDTH - 1 && (Ball_P[1] == Paddle_P[1] || Ball_P[1] == Paddle_P[1] + 1 || Ball_P[1] == Paddle_P[1] - 1))
-		Ball_V[0] *= -1;
+	// Scoring
+	if (ballPos[X] < 0 || ballPos[X] > screenWidth - 1) {
+		ballDir[X] = (ballPos[X] < 0);
+		ballDir[Y] = time(nullptr) % 2;
+		for (int dir = 0; dir < 2; dir++) if (ballDir[dir] == 0) ballDir[dir] = -1;
 
-	if (Ball_P[1] == 0 || Ball_P[1] == HEIGHT - 1)
-		Ball_V[1] *= -1;
-		
-	/* Scoring */
-	if (Ball_P[0] > WIDTH - 1) {
-		Score[0]++;
-		ResetBall();
+		score[1] += (ballPos[X] < 0);
+		score[0] += (ballPos[X] > screenWidth - 1);
+
+		ballPos[X] = screenWidth / 2;
+		ballPos[Y] = screenHeight / 2;
 	}
-	if (Ball_P[0] < 0) {
-		Score[1]++;
-		ResetBall();
-	}
-
 	
-
+	while (GetTimeSince(lastFrameTime) < FPS) {}
+	lastFrameTime = GetTime();
 }
 
-void ResetBall() {		// Resets Ball To Default Position & Determines Velocity Direction
+// Functions reused for delta time
 
+double GetTime() {
+	return time_point_cast<nanoseconds>(high_resolution_clock::now()).time_since_epoch().count() / 1e9;
+}
 
-	/* Reset Ball Positions To Center Board */
-	Ball_P[0] = WIDTH / 2;		
-	Ball_P[1] = HEIGHT / 2;
-
-	/* Determine Balls Y Direction (Random) */
-	if (rand() % 2 == 1) 
-		Ball_V[1] = -1;
-	else
-		Ball_V[1] = 1;
-
-	/* Determine Balls X Direction (Towards Winning Player, Else Random) */
-	if (Score[0] > Score[1])
-		Ball_V[0] = -1;
-	else if (Score[0] < Score[1])
-		Ball_V[0] = 1;
-	else {
-		if (rand() % 2 == 1)
-			Ball_V[0] = 1;
-		else
-			Ball_V[0] = -1;
-	}
-
+double GetTimeSince(double startTime) {
+	return time_point_cast<nanoseconds>(high_resolution_clock::now()).time_since_epoch().count() / 1e9 - startTime;
 }
